@@ -238,7 +238,7 @@ body::before {
   opacity: 0; transition: opacity .15s;
   padding: 0 2px;
 }
-.stage-card:hover .drag-handle { opacity: .6; }
+.route.edit-mode .stage-card:hover .drag-handle { opacity: .6; }
 .stage-card.dragging .drag-handle { opacity: 0; }
 
 /* Edit mode: show remove buttons + outline cards */
