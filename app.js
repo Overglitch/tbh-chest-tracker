@@ -489,8 +489,7 @@ function makeCursorUrl(img) {
   ctx.imageSmoothingEnabled = false;
   ctx.save();
   ctx.translate(size / 2, size / 2);
-  ctx.scale(-1, 1);             // flip 180° on vertical axis (mirror) → real cursor look
-  ctx.rotate(Math.PI * 3 / 4); // 135° CW → tip lands at upper-left (~4,4)
+  ctx.scale(-1, 1); // espejo vertical (flip left-right)
   ctx.drawImage(img, -size / 2, -size / 2, size, size);
   ctx.restore();
   return canvas.toDataURL('image/png');
@@ -502,10 +501,10 @@ function applyCursorMode(isEditMode) {
   if (isEditMode || !_cursors.Normal) { s.textContent = ''; return; }
   // Normal mode: soulstone cursors, matched to difficulty — no pointer/grab/hand distractions
   s.textContent = `
-    * { cursor: url("${_cursors.Normal}") 4 4, auto !important; }
-    .stage-card[data-diff="Nightmare"], .stage-card[data-diff="Nightmare"] * { cursor: url("${_cursors.Nightmare}") 4 4, auto !important; }
-    .stage-card[data-diff="Hell"],      .stage-card[data-diff="Hell"]      * { cursor: url("${_cursors.Hell}")      4 4, auto !important; }
-    .stage-card[data-diff="Torment"],   .stage-card[data-diff="Torment"]   * { cursor: url("${_cursors.Torment}")   4 4, auto !important; }
+    * { cursor: url("${_cursors.Normal}") 14 2, auto !important; }
+    .stage-card[data-diff="Nightmare"], .stage-card[data-diff="Nightmare"] * { cursor: url("${_cursors.Nightmare}") 14 2, auto !important; }
+    .stage-card[data-diff="Hell"],      .stage-card[data-diff="Hell"]      * { cursor: url("${_cursors.Hell}")      14 2, auto !important; }
+    .stage-card[data-diff="Torment"],   .stage-card[data-diff="Torment"]   * { cursor: url("${_cursors.Torment}")   14 2, auto !important; }
   `;
 }
 
