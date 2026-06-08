@@ -1,0 +1,879 @@
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* UI/UX Pro Max: Retro-Futurism + TBH dark theme */
+  --bg-void:    #020617;   /* skill: #020617 deep black */
+  --bg-dark:    #0d0d18;
+  --bg-card:    #111122;
+  --bg-card2:   #161628;
+  --border:     #1e1e3a;
+  --border-hot: #8b1a1a;
+
+  /* TBH signature reds */
+  --red-dark:   #5c0a0a;
+  --red:        #9b1c1c;
+  --red-light:  #dc2626;
+  --red-glow:   rgba(155,28,28,0.35);
+
+  /* Retro-futurism neon accents (from skill) */
+  --neon-cyan:  #00e5ff;
+  --neon-pink:  #ff006e;
+  --neon-blue:  #0080ff;
+  --neon-green: #22c55e;   /* skill CTA color */
+  --neon-glow:  rgba(0,229,255,0.25);
+
+  --gold:       #c9a227;
+  --gold-light: #e5c84a;
+  --gold-dim:   #7a6010;
+
+  --blue:       #2563eb;
+  --blue-light: #60a5fa;
+  --blue-glow:  rgba(37,99,235,0.4);
+
+  --grey-chest: #6b7280;
+  --grey-light: #9ca3af;
+
+  --text-primary:   #e8e0d0;
+  --text-secondary: #8a8070;
+  --text-dim:       #4a4540;
+
+  --green:  #16a34a;
+  --orange: #ea580c;
+
+  /* skill: Fira Code for technical/dashboard monospace feel */
+  --font-title: 'Cinzel', serif;
+  --font-mono:  'Fira Code', 'Roboto Mono', monospace;
+  --font-body:  'Fira Code', 'Roboto Mono', monospace;
+
+  --radius: 4px;
+  --cd-duration: 720s;
+
+  /* skill: scanline opacity */
+  --scanline-opacity: 0.06;
+  --glitch-duration: 0.3s;
+}
+
+html { scroll-behavior: smooth; }
+
+/* ── CRT Scanlines overlay (skill: retro-futurism) ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,var(--scanline-opacity)) 2px,
+    rgba(0,0,0,var(--scanline-opacity)) 4px
+  );
+  pointer-events: none;
+  z-index: 9998;
+}
+
+body {
+  background: var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(100,10,10,0.22) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 30% at 80% 100%, rgba(0,80,255,0.04) 0%, transparent 60%);
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-dark); }
+::-webkit-scrollbar-thumb { background: var(--red-dark); border-radius: 3px; }
+
+/* ── Header ── */
+.site-header {
+  background: linear-gradient(180deg, #130303 0%, #080812 100%);
+  border-bottom: 1px solid var(--red-dark);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  /* skill: neon glow on borders */
+  box-shadow:
+    0 4px 20px rgba(0,0,0,0.8),
+    0 1px 0 var(--red),
+    0 2px 16px rgba(155,28,28,0.4);
+}
+
+.header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-icon {
+  width: 28px;
+  height: 28px;
+  image-rendering: pixelated;
+}
+
+.logo-title {
+  font-family: var(--font-title);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 2px;
+  text-shadow: 0 0 12px rgba(201,162,39,0.5);
+}
+
+.logo-subtitle {
+  font-family: var(--font-title);
+  font-size: 11px;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-left: 1px solid var(--border);
+  padding-left: 8px;
+  margin-left: 2px;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lang-switcher {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.lang-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 4px 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s;
+  border-right: 1px solid var(--border);
+}
+
+.lang-btn:last-child { border-right: none; }
+.lang-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
+.lang-btn.active { background: var(--red-dark); color: var(--gold); }
+
+.icon-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  width: 30px; height: 30px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+
+.icon-btn:hover { border-color: var(--red); color: var(--text-primary); }
+.icon-btn.muted { color: var(--text-dim); }
+
+/* ── Stats bar ── */
+.stats-bar {
+  max-width: 1100px;
+  margin: 14px auto 0;
+  padding: 0 20px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.stat-pill {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.stat-icon { font-size: 16px; }
+.stat-label { color: var(--text-secondary); font-size: 11px; margin-left: 2px; }
+
+/* ── Filter bar ── */
+.filter-bar {
+  max-width: 1100px;
+  margin: 14px auto 0;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.diff-tabs {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.diff-tab {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 6px 14px;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all .15s;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+.diff-tab:hover { border-color: var(--red); color: var(--text-primary); }
+.diff-tab.active { background: var(--red-dark); border-color: var(--red); color: var(--gold-light); }
+
+/* difficulty colour coding */
+.diff-tab[data-diff="Normal"].active    { background: #14532d; border-color: #16a34a; color: #86efac; }
+.diff-tab[data-diff="Nightmare"].active { background: #1e3a5f; border-color: #2563eb; color: #93c5fd; }
+.diff-tab[data-diff="Inferno"].active   { background: #7c2d12; border-color: #ea580c; color: #fed7aa; }
+.diff-tab[data-diff="Torment"].active   { background: #4a044e; border-color: #a21caf; color: #f0abfc; }
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 12px;
+  user-select: none;
+}
+
+.toggle-label input[type=checkbox] {
+  appearance: none;
+  width: 14px; height: 14px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--bg-card);
+  cursor: pointer;
+  position: relative;
+}
+
+.toggle-label input[type=checkbox]:checked {
+  background: var(--red-dark);
+  border-color: var(--red);
+}
+
+.toggle-label input[type=checkbox]:checked::after {
+  content: '✓';
+  position: absolute;
+  top: -1px; left: 1px;
+  font-size: 11px;
+  color: var(--gold-light);
+}
+
+/* ── Main ── */
+.main-content {
+  max-width: 1100px;
+  margin: 16px auto 40px;
+  padding: 0 20px;
+}
+
+.phases-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 12px;
+}
+
+/* ── Phase Card ── */
+.phase-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.phase-card:hover {
+  border-color: rgba(139,26,26,0.6);
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+}
+
+.phase-card.in-route {
+  border-color: var(--gold-dim);
+}
+
+.phase-card.hidden { display: none; }
+
+.card-header {
+  background: linear-gradient(90deg, var(--bg-card2) 0%, #16161f 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.phase-name {
+  font-family: var(--font-title);
+  font-size: 13px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.phase-badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.diff-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+.diff-badge.Normal    { background: #14532d; color: #86efac; border: 1px solid #16a34a; }
+.diff-badge.Nightmare { background: #1e3a5f; color: #93c5fd; border: 1px solid #2563eb; }
+.diff-badge.Inferno   { background: #7c2d12; color: #fed7aa; border: 1px solid #ea580c; }
+.diff-badge.Torment   { background: #4a044e; color: #f0abfc; border: 1px solid #a21caf; }
+
+.route-toggle {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  width: 22px; height: 22px;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  transition: all .15s;
+  flex-shrink: 0;
+}
+
+.route-toggle:hover { border-color: var(--gold-dim); color: var(--gold); }
+.route-toggle.active { background: rgba(201,162,39,0.15); border-color: var(--gold-dim); color: var(--gold); }
+
+/* ── Card body ── */
+.card-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+
+/* Grey chest row */
+.grey-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chest-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  white-space: nowrap;
+}
+
+.grey-check {
+  width: 20px; height: 20px;
+  appearance: none;
+  border: 1px solid var(--grey-chest);
+  border-radius: 2px;
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: all .15s;
+}
+
+.grey-check:hover { border-color: var(--grey-light); }
+.grey-check:checked { background: var(--grey-chest); border-color: var(--grey-light); }
+.grey-check:checked::after {
+  content: '✓';
+  position: absolute;
+  top: -2px; left: 2px;
+  color: white;
+  font-size: 14px;
+}
+
+/* Blue chest section */
+.blue-section { display: flex; flex-direction: column; gap: 6px; }
+
+.blue-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.drop-btn {
+  background: linear-gradient(135deg, var(--red-dark) 0%, #3b0a0a 100%);
+  border: 1px solid var(--red);
+  color: var(--text-primary);
+  padding: 6px 14px;
+  border-radius: var(--radius);
+  font-family: var(--font-title);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all .15s;
+  text-transform: uppercase;
+}
+
+.drop-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+  box-shadow: 0 0 12px var(--red-glow);
+  color: var(--gold-light);
+}
+
+.drop-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Timer */
+.timer-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.timer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.timer-display {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--gold);
+  letter-spacing: 3px;
+  /* skill: neon glow on text */
+  text-shadow:
+    0 0 6px rgba(201,162,39,0.8),
+    0 0 20px rgba(201,162,39,0.3);
+}
+
+/* skill: neon-green for ready state */
+.timer-display.ready {
+  color: var(--neon-green);
+  text-shadow:
+    0 0 6px rgba(34,197,94,0.9),
+    0 0 20px rgba(34,197,94,0.4),
+    0 0 40px rgba(34,197,94,0.15);
+  animation: pulse-green 2s ease-in-out infinite;
+}
+
+@keyframes pulse-green {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.7; text-shadow: 0 0 12px rgba(34,197,94,1), 0 0 30px rgba(34,197,94,0.5); }
+}
+
+.timer-display.urgent {
+  color: var(--red-light);
+  text-shadow:
+    0 0 6px rgba(220,38,38,0.9),
+    0 0 20px rgba(220,38,38,0.4);
+  animation: pulse-red 1s ease-in-out infinite;
+}
+
+@keyframes pulse-red {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; text-shadow: 0 0 12px rgba(220,38,38,1), 0 0 30px rgba(220,38,38,0.6); }
+}
+
+.cancel-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 2px 6px;
+  transition: color .15s;
+}
+
+.cancel-btn:hover { color: var(--red-light); }
+
+/* Progress bar */
+.progress-bar-track {
+  height: 6px;
+  background: var(--bg-void);
+  border-radius: 2px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width .5s linear, background-color .5s;
+  background: linear-gradient(90deg, var(--red-dark), var(--gold));
+}
+
+.progress-bar-fill.ready-fill {
+  background: var(--green);
+  width: 100% !important;
+}
+
+.progress-bar-fill.urgent-fill {
+  background: linear-gradient(90deg, var(--red-dark), var(--red-light));
+}
+
+/* No timer state */
+.no-timer {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+/* ── Footer ── */
+.site-footer {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-dim);
+  font-size: 11px;
+  border-top: 1px solid var(--border);
+  margin-top: 20px;
+}
+
+/* ── Toast ── */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 999;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--bg-card2);
+  border: 1px solid var(--gold-dim);
+  border-left: 3px solid var(--gold);
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  color: var(--text-primary);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  animation: slideIn .25s ease, fadeOut .4s ease 3.6s forwards;
+  pointer-events: all;
+  max-width: 280px;
+}
+
+.toast.alert-toast {
+  border-left-color: var(--green);
+  border-color: var(--green);
+}
+
+@keyframes slideIn {
+  from { transform: translateX(110%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; transform: translateX(110%); }
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .header-inner { padding: 8px 12px; }
+  .logo-subtitle { display: none; }
+  .stats-bar, .filter-bar, .main-content { padding: 0 12px; }
+  .phases-grid { grid-template-columns: 1fr; }
+  .diff-tab { padding: 5px 10px; font-size: 11px; }
+}
+
+/* Pixel-art border decoration on cards */
+.phase-card::before {
+  content: '';
+  display: block;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    var(--red-dark) 20%,
+    var(--gold-dim) 50%,
+    var(--red-dark) 80%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity .3s;
+}
+
+.phase-card.in-route::before { opacity: 1; }
+
+/* ════════════════════════════════════════════
+   21ST.DEV-INSPIRED ANIMATIONS & EFFECTS
+   ════════════════════════════════════════════ */
+
+/* ── 1. Stagger entrance ── */
+@keyframes cardEnter {
+  from { opacity: 0; transform: translateY(18px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+.phase-card {
+  animation: cardEnter .4s cubic-bezier(.22,.68,0,1.2) both;
+}
+
+/* ── 2. Shimmer sweep on DROPPED! button ── */
+.drop-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.drop-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg,
+    transparent 35%,
+    rgba(255,255,255,0.18) 50%,
+    transparent 65%
+  );
+  transform: translateX(-100%);
+  transition: transform 0s;
+}
+
+.drop-btn:not(:disabled):hover::after {
+  transform: translateX(100%);
+  transition: transform .55s ease;
+}
+
+/* ── 3. Ripple effect (injected via JS) ── */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  pointer-events: none;
+  transform: scale(0);
+  animation: rippleAnim .55s linear forwards;
+}
+
+@keyframes rippleAnim {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* ── 4. Spotlight cursor glow on cards (CSS custom props set by JS) ── */
+.phase-card {
+  --spotlight-x: 50%;
+  --spotlight-y: 50%;
+  --spotlight-opacity: 0;
+}
+
+.phase-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(
+    200px circle at var(--spotlight-x) var(--spotlight-y),
+    rgba(201,162,39,0.08),
+    transparent 70%
+  );
+  opacity: var(--spotlight-opacity);
+  transition: opacity .2s;
+  z-index: 0;
+}
+
+/* ensure card children sit above spotlight overlay */
+.card-header, .card-body { position: relative; z-index: 1; }
+
+/* ── 5. Animated gradient border on active-timer cards ── */
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes rotateBorder { to { --angle: 360deg; } }
+
+.phase-card.timer-active {
+  border-color: transparent;
+  background-clip: padding-box;
+  position: relative;
+}
+
+.phase-card.timer-active::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: calc(var(--radius) + 1px);
+  padding: 1px;
+  background: conic-gradient(
+    from var(--angle),
+    var(--red-dark) 0%,
+    var(--gold) 30%,
+    var(--red) 50%,
+    var(--gold-dim) 70%,
+    var(--red-dark) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: rotateBorder 3s linear infinite;
+  opacity: 1 !important;
+  z-index: -1;
+  height: auto;
+}
+
+/* ── 6. Timer ready glow + glitch ── */
+@keyframes glitch {
+  0%,100% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+  10%      { clip-path: inset(20% 0 60% 0); transform: translate(-2px, 1px); }
+  20%      { clip-path: inset(60% 0 10% 0); transform: translate(2px, -1px); }
+  30%      { clip-path: inset(0 0 0 0);     transform: translate(0); }
+}
+
+.timer-display.ready {
+  position: relative;
+}
+
+.timer-display.ready::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  color: #4ade80;
+  animation: glitch 2.5s steps(1) infinite;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ── 7. Stat pill counter pop ── */
+@keyframes statPop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+.stat-pop { animation: statPop .3s cubic-bezier(.34,1.56,.64,1); }
+
+/* ── 8. Card hover lift ── */
+.phase-card:not(.timer-active):hover {
+  transform: translateY(-2px);
+  transition: transform .2s ease, border-color .2s, box-shadow .2s;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(139,26,26,0.3);
+}
+
+.phase-card { transition: transform .2s ease, border-color .2s, box-shadow .2s; }
+
+/* ── 9. Checkbox check animation ── */
+.grey-check:checked {
+  animation: checkBounce .25s cubic-bezier(.34,1.56,.64,1);
+}
+
+@keyframes checkBounce {
+  0%   { transform: scale(0.7); }
+  60%  { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* ── 10. Drop-btn active press ── */
+.drop-btn:not(:disabled):active {
+  transform: scale(0.95);
+  transition: transform .08s;
+}
+
+/* ── 11. Header title shimmer ── */
+@keyframes titleShimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+.logo-title {
+  background: linear-gradient(90deg,
+    var(--gold) 0%,
+    var(--gold-light) 40%,
+    #fff8dc 50%,
+    var(--gold-light) 60%,
+    var(--gold) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: titleShimmer 4s linear infinite;
+  text-shadow: none;
+}
+
+/* ── 12. Toast slide-in improved ── */
+.toast {
+  animation: toastIn .3s cubic-bezier(.34,1.56,.64,1), fadeOut .4s ease 3.6s forwards;
+}
+
+@keyframes toastIn {
+  from { transform: translateX(110%) scale(0.9); opacity: 0; }
+  to   { transform: translateX(0)    scale(1);   opacity: 1; }
+}
+
+/* ════════════════════════════════════════════
+   UI/UX PRO MAX: NEON GLOW ENHANCEMENTS
+   ════════════════════════════════════════════ */
+
+/* Neon cyan border on hover (skill: retro-futurism) */
+.phase-card:hover {
+  border-color: rgba(0,229,255,0.18) !important;
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(0,229,255,0.12),
+    inset 0 0 30px rgba(0,229,255,0.02);
+}
+
+/* Neon glow on active timer border */
+.phase-card.timer-active {
+  box-shadow:
+    0 0 20px rgba(201,162,39,0.15),
+    0 0 40px rgba(155,28,28,0.1);
+}
+
+/* Neon drop-btn glow on hover */
+.drop-btn:not(:disabled):hover {
+  box-shadow:
+    0 0 12px var(--red-glow),
+    0 0 24px rgba(155,28,28,0.2);
+}
+
+/* Stat pills — subtle neon border */
+.stat-pill:nth-child(2) { border-color: rgba(34,197,94,0.2); }
+.stat-pill:nth-child(3) { border-color: rgba(201,162,39,0.2); }
+
+/* Ready card — green neon glow */
+.phase-card:has(.timer-display.ready) {
+  box-shadow:
+    0 0 0 1px rgba(34,197,94,0.3),
+    0 0 20px rgba(34,197,94,0.1),
+    0 0 40px rgba(34,197,94,0.05) !important;
+}
+
+/* ── prefers-reduced-motion (skill: HIGH severity) ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .phase-card { animation: none; }
+  body::before { display: none; } /* disable CRT scanlines */
+}

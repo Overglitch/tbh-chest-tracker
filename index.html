@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TBH Chest Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <img src="https://taskbarhero.wiki/favicon.ico" alt="TBH" class="logo-icon" onerror="this.style.display='none'" />
+        <span class="logo-title">TBH</span>
+        <span class="logo-subtitle">Chest Tracker</span>
+      </div>
+      <div class="header-controls">
+        <div class="lang-switcher" id="langSwitcher">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="es">ES</button>
+          <button class="lang-btn" data-lang="pt">PT</button>
+        </div>
+        <button class="icon-btn" id="resetBtn" title="Reset all">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        </button>
+        <button class="icon-btn" id="soundBtn" title="Toggle sound">
+          <svg id="soundIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Stats bar -->
+  <div class="stats-bar">
+    <div class="stat-pill">
+      <span class="stat-icon">⬜</span>
+      <span id="greyCount">0</span>/<span id="greyTotal">10</span>
+      <span class="stat-label" data-i18n="grey">Grey</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-icon">🔵</span>
+      <span id="blueReady">0</span>
+      <span class="stat-label" data-i18n="ready">Ready</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-icon">⏱</span>
+      <span id="blueOnCd">0</span>
+      <span class="stat-label" data-i18n="onCd">On CD</span>
+    </div>
+    <div class="stat-pill route-stat">
+      <span class="stat-icon">🗺</span>
+      <span id="routeCount">0</span>
+      <span class="stat-label" data-i18n="inRoute">In route</span>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-bar">
+    <div class="diff-tabs" id="diffTabs">
+      <button class="diff-tab active" data-diff="all" data-i18n="all">All</button>
+      <button class="diff-tab" data-diff="Normal">Normal</button>
+      <button class="diff-tab" data-diff="Nightmare" data-i18n="nightmare">Nightmare</button>
+      <button class="diff-tab" data-diff="Inferno">Inferno</button>
+      <button class="diff-tab" data-diff="Torment">Torment</button>
+    </div>
+    <div class="view-controls">
+      <label class="toggle-label">
+        <input type="checkbox" id="showRouteOnly" />
+        <span data-i18n="routeOnly">Route only</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <main class="main-content">
+    <div class="phases-grid" id="phasesGrid"></div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <span data-i18n="footer">TBH Chest Tracker · Data saved locally in your browser</span>
+  </footer>
+
+  <!-- Sound alert (Web Audio API) -->
+  <audio id="alertSound" preload="auto"></audio>
+
+  <script src="app.js"></script>
+</body>
+</html>
