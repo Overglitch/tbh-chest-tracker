@@ -225,6 +225,21 @@ body::before {
   box-shadow: 0 0 20px rgba(201,162,39,.1);
 }
 
+/* Drag & drop */
+.stage-card[draggable="true"] { cursor: grab; }
+.stage-card.dragging { opacity: .35; box-shadow: none !important; }
+.stage-card.drag-over-top    { border-top: 2px solid var(--gold); }
+.stage-card.drag-over-bottom { border-bottom: 2px solid var(--gold); }
+
+.drag-handle {
+  flex-shrink: 0; color: var(--text3);
+  cursor: grab; display: flex; align-items: center;
+  opacity: 0; transition: opacity .15s;
+  padding: 0 2px;
+}
+.stage-card:hover .drag-handle { opacity: .6; }
+.stage-card.dragging .drag-handle { opacity: 0; }
+
 /* Edit mode: show remove buttons + outline cards */
 .route.edit-mode .stage-card {
   border-style: dashed;

@@ -273,7 +273,7 @@ function tickTimer(key) {
     r.blueDropAt = null;
     stopTimer(key);
     save();
-    render();
+    render(true);
     return;
   } else {
     timerEl.textContent = fmtTime(remaining);
@@ -290,8 +290,59 @@ function tickTimer(key) {
 function startTimer(key) { stopTimer(key); tickTimer(key); timers[key] = setInterval(() => tickTimer(key), 1000); }
 function stopTimer(key) { if (timers[key]) { clearInterval(timers[key]); delete timers[key]; } }
 
+/* ── Drag & drop reorder ── */
+let dragKey = null;
+
+function initDrag(card, key) {
+  card.setAttribute('draggable', 'true');
+
+  card.addEventListener('dragstart', e => {
+    dragKey = key;
+    e.dataTransfer.effectAllowed = 'move';
+    setTimeout(() => card.classList.add('dragging'), 0);
+  });
+
+  card.addEventListener('dragend', () => {
+    dragKey = null;
+    card.classList.remove('dragging');
+    document.querySelectorAll('.stage-card').forEach(c =>
+      c.classList.remove('drag-over-top', 'drag-over-bottom')
+    );
+  });
+
+  card.addEventListener('dragover', e => {
+    e.preventDefault();
+    if (!dragKey || dragKey === key) return;
+    e.dataTransfer.dropEffect = 'move';
+    const mid = card.getBoundingClientRect().top + card.offsetHeight / 2;
+    document.querySelectorAll('.stage-card').forEach(c =>
+      c.classList.remove('drag-over-top', 'drag-over-bottom')
+    );
+    card.classList.add(e.clientY < mid ? 'drag-over-top' : 'drag-over-bottom');
+  });
+
+  card.addEventListener('dragleave', () =>
+    card.classList.remove('drag-over-top', 'drag-over-bottom')
+  );
+
+  card.addEventListener('drop', e => {
+    e.preventDefault();
+    card.classList.remove('drag-over-top', 'drag-over-bottom');
+    if (!dragKey || dragKey === key) return;
+    const fromIdx = route.findIndex(r => r.key === dragKey);
+    const toIdx   = route.findIndex(r => r.key === key);
+    if (fromIdx === -1 || toIdx === -1) return;
+    const mid = card.getBoundingClientRect().top + card.offsetHeight / 2;
+    const before = e.clientY < mid;
+    const [moved] = route.splice(fromIdx, 1);
+    const newTo   = route.findIndex(r => r.key === key);
+    route.splice(before ? newTo : newTo + 1, 0, moved);
+    save(); render(true);
+  });
+}
+
 /* ── Render ── */
-function render() {
+function render(skipAnim = false) {
   const container = document.getElementById('route');
   container.querySelectorAll('.stage-card').forEach(c => c.remove());
   const empty = document.getElementById('emptyState');
@@ -307,7 +358,8 @@ function render() {
     card.className = 'stage-card';
     card.dataset.key = r.key;
     card.dataset.diff = r.diff;
-    card.style.animationDelay = `${i * 30}ms`;
+    if (!skipAnim) card.style.animationDelay = `${i * 30}ms`;
+    else card.style.animation = 'none';
 
     const hasTimer = r.blueDropAt != null; // only true while countdown active
     if (hasTimer) card.classList.add('timer-active');
@@ -317,6 +369,9 @@ function render() {
 
     card.innerHTML = `
       <div class="card-main">
+        <span class="drag-handle" title="Drag to reorder">
+          <svg width="10" height="14" viewBox="0 0 10 14" fill="currentColor"><circle cx="3" cy="2" r="1.2"/><circle cx="7" cy="2" r="1.2"/><circle cx="3" cy="7" r="1.2"/><circle cx="7" cy="7" r="1.2"/><circle cx="3" cy="12" r="1.2"/><circle cx="7" cy="12" r="1.2"/></svg>
+        </span>
         <span class="step-num">${i + 1}</span>
         <div class="chests-group">
           <button class="chest-btn grey-chest ${greyState}" title="${t('greyHint')}">
@@ -357,29 +412,28 @@ function render() {
     blueBtn.addEventListener('click', () => {
       if (r.blueDropAt != null) return; // ignore clicks while countdown running
       if (r.blueDone) {
-        // Already collected — clicking resets it (ready for next cycle)
         r.blueDone = false;
       } else {
-        // Start timer
         r.blueDropAt = Date.now();
         notified[r.key] = false;
       }
-      save(); render();
+      save(); render(true);
     });
     if (hasTimer) {
       card.querySelector('.cancel-timer').addEventListener('click', () => {
         r.blueDropAt = null; r.blueDone = false;
         stopTimer(r.key); notified[r.key] = false;
-        save(); render();
+        save(); render(true);
       });
     }
 
     card.querySelector('.remove-btn').addEventListener('click', () => {
       stopTimer(r.key);
       route = route.filter(x => x.key !== r.key);
-      save(); render(); toast(t('toastRemoved'));
+      save(); render(); toast(t('toastRemoved')); // animate after removal
     });
 
+    initDrag(card, r.key);
     container.insertBefore(card, empty);
     if (hasTimer) startTimer(r.key);
   });
@@ -424,6 +478,28 @@ function clearRoute() {
   save(); render(); toast(t('toastCleared'));
 }
 
+/* ── Custom cursor ── */
+function initCursor() {
+  const img = new Image();
+  img.onload = () => {
+    const size = 32;
+    const canvas = document.createElement('canvas');
+    canvas.width = size; canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
+    ctx.save();
+    ctx.translate(size / 2, size / 2);
+    ctx.rotate(-Math.PI / 4); // -45° so it points top-left like a real cursor
+    ctx.drawImage(img, -size / 2, -size / 2, size, size);
+    ctx.restore();
+    const url = canvas.toDataURL('image/png');
+    const s = document.createElement('style');
+    s.textContent = `html, body { cursor: url("${url}") 4 4, auto; }`;
+    document.head.appendChild(s);
+  };
+  img.src = 'img/Item_190004.png';
+}
+
 /* ── Init ── */
 function init() {
   load();
@@ -437,6 +513,7 @@ function init() {
   document.getElementById('defaultBtn').addEventListener('click', loadDefaultRoute);
 
   document.getElementById('editBtn').addEventListener('click', toggleEditMode);
+  initCursor();
 
   document.getElementById('langSwitch').addEventListener('click', e => {
     if (!e.target.dataset.lang) return;
