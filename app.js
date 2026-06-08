@@ -259,6 +259,7 @@ function render() {
     const card = document.createElement('div');
     card.className = 'stage-card';
     card.dataset.key = r.key;
+    card.dataset.diff = r.diff;
     card.style.animationDelay = `${i * 30}ms`;
 
     const hasTimer = r.blueDropAt != null;
@@ -270,7 +271,6 @@ function render() {
     const blueState = hasTimer ? (isReady ? 'blue-ready' : 'blue-active') : '';
 
     card.innerHTML = `
-      <div class="diff-accent ${r.diff}"></div>
       <div class="card-main">
         <div class="chests-group">
           <button class="chest-btn grey-chest ${greyState}" title="${t('greyHint')}">
@@ -295,10 +295,10 @@ function render() {
             : ''}
         </div>
       </div>
+      <div class="progress"><div class="progress-fill" style="width:0%"></div></div>
       <button class="remove-btn" title="Remove">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
-      <div class="progress"><div class="progress-fill" style="width:0%"></div></div>
     `;
 
     card.querySelector('.grey-chest').addEventListener('click', () => {
