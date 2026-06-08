@@ -297,6 +297,7 @@ function initDrag(card, key) {
   card.setAttribute('draggable', 'true');
 
   card.addEventListener('dragstart', e => {
+    if (!editMode) { e.preventDefault(); return; }
     dragKey = key;
     e.dataTransfer.effectAllowed = 'move';
     setTimeout(() => card.classList.add('dragging'), 0);
