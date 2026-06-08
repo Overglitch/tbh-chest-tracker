@@ -78,6 +78,14 @@ const I18N = {
     toastCleared: 'Route cleared',
     greyHint: 'Grey chest collected (don\'t open)',
     blueHint: 'Click when blue chest drops',
+    howTo: 'How to use',
+    howToSteps: [
+      'Follow your route in order <strong>(1, 2, 3...)</strong> from left to right, top to bottom.',
+      'At each stage, farm until the <strong>common chest</strong> drops. Click the <img class="ht-icon" src="img/Item_910011.png"> to mark it as collected. <strong>Do NOT open it.</strong>',
+      'Collecting grey chests without opening them increases the probability of a <strong>blue chest</strong> drop.',
+      'When the <strong>blue chest</strong> drops, click <img class="ht-icon" src="img/Item_920011.png"> to start the <strong>12-minute cooldown</strong> timer.',
+      'Once the timer finishes, the blue chest is ready to be collected. Move to the next stage and repeat.',
+    ],
   },
   es: {
     ready: 'Listo', onCd: 'En CD', grey: 'Gris',
@@ -93,6 +101,14 @@ const I18N = {
     toastCleared: 'Ruta limpiada',
     greyHint: 'Cofre gris recogido (no abrir)',
     blueHint: 'Click cuando dropee el cofre azul',
+    howTo: 'Como usar',
+    howToSteps: [
+      'Sigue tu ruta en orden <strong>(1, 2, 3...)</strong> de izquierda a derecha, de arriba hacia abajo.',
+      'En cada stage, farmea hasta que dropee el <strong>cofre comun</strong>. Haz click en <img class="ht-icon" src="img/Item_910011.png"> para marcarlo. <strong>NO lo abras.</strong>',
+      'Recoger cofres grises sin abrirlos aumenta la probabilidad de que dropee un <strong>cofre azul</strong>.',
+      'Cuando dropee el <strong>cofre azul</strong>, haz click en <img class="ht-icon" src="img/Item_920011.png"> para iniciar el <strong>cooldown de 12 minutos</strong>.',
+      'Cuando el timer termine, el cofre azul esta listo. Pasa al siguiente stage y repite.',
+    ],
   },
   pt: {
     ready: 'Pronto', onCd: 'Em CD', grey: 'Cinza',
@@ -108,6 +124,14 @@ const I18N = {
     toastCleared: 'Rota limpa',
     greyHint: 'Baú cinza coletado (não abrir)',
     blueHint: 'Clique quando o baú azul dropar',
+    howTo: 'Como usar',
+    howToSteps: [
+      'Siga sua rota em ordem <strong>(1, 2, 3...)</strong> da esquerda para a direita, de cima para baixo.',
+      'Em cada stage, farme ate o <strong>bau comum</strong> dropar. Clique em <img class="ht-icon" src="img/Item_910011.png"> para marcar. <strong>NAO abra.</strong>',
+      'Coletar baus cinzas sem abrir aumenta a probabilidade de dropar um <strong>bau azul</strong>.',
+      'Quando o <strong>bau azul</strong> dropar, clique em <img class="ht-icon" src="img/Item_920011.png"> para iniciar o <strong>cooldown de 12 minutos</strong>.',
+      'Quando o timer acabar, o bau azul esta pronto. Passe para o proximo stage e repita.',
+    ],
   },
 };
 
@@ -161,6 +185,9 @@ function toast(msg) {
 function applyLang() {
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll('.lang-opt').forEach(b => { b.classList.toggle('active', b.dataset.lang === lang); });
+  const steps = (I18N[lang] || I18N.en).howToSteps || [];
+  const ol = document.getElementById('howToSteps');
+  if (ol) ol.innerHTML = steps.map(s => `<li>${s}</li>`).join('');
   localStorage.setItem('tbh-lang', lang);
 }
 
@@ -272,6 +299,7 @@ function render() {
 
     card.innerHTML = `
       <div class="card-main">
+        <span class="step-num">${i + 1}</span>
         <div class="chests-group">
           <button class="chest-btn grey-chest ${greyState}" title="${t('greyHint')}">
             <img src="img/Item_910011.png" alt="grey" />
@@ -293,12 +321,12 @@ function render() {
             ? `<div class="timer ${isReady ? 'done' : 'counting'}">${isReady ? t('readyMsg') : fmtTime(CD_MS - (Date.now() - r.blueDropAt))}</div>
                <button class="cancel-timer">${t('cancel')}</button>`
             : ''}
+          <button class="remove-btn" title="Remove">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
       </div>
       <div class="progress"><div class="progress-fill" style="width:0%"></div></div>
-      <button class="remove-btn" title="Remove">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
     `;
 
     card.querySelector('.grey-chest').addEventListener('click', () => {
@@ -375,7 +403,7 @@ function clearRoute() {
 /* ── Init ── */
 function init() {
   load();
-  if (!route.length && !localStorage.getItem('tbh-route')) loadDefaultRoute();
+  if (!route.length) loadDefaultRoute();
 
   populateStages();
   document.getElementById('actSelect').addEventListener('change', populateStages);
@@ -388,6 +416,14 @@ function init() {
     if (!e.target.dataset.lang) return;
     lang = e.target.dataset.lang;
     applyLang(); render();
+  });
+
+  // How-to toggle
+  const howToggle = document.getElementById('howToToggle');
+  const howContent = document.getElementById('howToContent');
+  howToggle.addEventListener('click', () => {
+    howToggle.classList.toggle('open');
+    howContent.classList.toggle('open');
   });
 
   const soundBtn = document.getElementById('soundToggle');
