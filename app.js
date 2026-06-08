@@ -209,8 +209,8 @@ function toggleEditMode() {
   editMode = !editMode;
   document.getElementById('route').classList.toggle('edit-mode', editMode);
   document.getElementById('editBtn').classList.toggle('edit-active', editMode);
-  const addSection = document.getElementById('addSection');
-  addSection.classList.toggle('edit-mode', editMode);
+  document.getElementById('addSection').classList.toggle('edit-mode', editMode);
+  applyCursorMode(editMode);
 }
 
 /* ── Stats ── */
@@ -479,6 +479,21 @@ function clearRoute() {
 }
 
 /* ── Custom cursor ── */
+let _cursorUrl = null;
+
+function applyCursorMode(isEditMode) {
+  let s = document.getElementById('cursor-style');
+  if (!s) { s = document.createElement('style'); s.id = 'cursor-style'; document.head.appendChild(s); }
+  if (!_cursorUrl) return;
+  if (isEditMode) {
+    // Edit mode: let browser use natural cursors (grab on cards, pointer on buttons)
+    s.textContent = '';
+  } else {
+    // Normal mode: crystal cursor on everything — no pointer/grab distractions
+    s.textContent = `* { cursor: url("${_cursorUrl}") 4 4, auto !important; }`;
+  }
+}
+
 function initCursor() {
   const img = new Image();
   img.onload = () => {
@@ -489,13 +504,12 @@ function initCursor() {
     ctx.imageSmoothingEnabled = false;
     ctx.save();
     ctx.translate(size / 2, size / 2);
-    ctx.rotate(-Math.PI / 4); // -45° so it points top-left like a real cursor
+    // Crystal tip is at the bottom of the sprite → rotate 135° CW to place tip at upper-left
+    ctx.rotate(Math.PI * 3 / 4);
     ctx.drawImage(img, -size / 2, -size / 2, size, size);
     ctx.restore();
-    const url = canvas.toDataURL('image/png');
-    const s = document.createElement('style');
-    s.textContent = `html, body { cursor: url("${url}") 4 4, auto; }`;
-    document.head.appendChild(s);
+    _cursorUrl = canvas.toDataURL('image/png');
+    applyCursorMode(false); // start in normal (crystal) mode
   };
   img.src = 'img/Item_190004.png';
 }
