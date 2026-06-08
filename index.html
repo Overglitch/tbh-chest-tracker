@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=3" />
 </head>
 <body>
 
@@ -76,6 +76,17 @@
     </div>
   </section>
 
+  <!-- How to use -->
+  <section class="how-to">
+    <button class="how-to-toggle" id="howToToggle">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <span data-i18n="howTo">How to use</span>
+    </button>
+    <div class="how-to-content" id="howToContent">
+      <ol id="howToSteps"></ol>
+    </div>
+  </section>
+
   <!-- Route cards -->
   <main class="route" id="route">
     <div class="empty-state" id="emptyState">
@@ -107,6 +118,6 @@
 
   <div class="toast-container" id="toasts"></div>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=3"></script>
 </body>
 </html>
