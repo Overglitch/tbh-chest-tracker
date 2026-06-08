@@ -251,19 +251,24 @@ body::before {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Difficulty accent bar */
+/* Difficulty accent bar — now a vertical ::before on the card */
 .diff-accent { display: none; }
 
+.stage-card::before {
+  content: ''; position: absolute;
+  left: 0; top: 0; bottom: 0; width: 4px; z-index: 1;
+}
+.stage-card[data-diff="Normal"]::before    { background: rgba(228,228,228,.25); }
+.stage-card[data-diff="Nightmare"]::before { background: rgba(252,156,12,.35); }
+.stage-card[data-diff="Hell"]::before      { background: rgba(252,36,36,.35); }
+.stage-card[data-diff="Torment"]::before   { background: rgba(180,12,252,.35); }
+
 .card-main {
-  padding: 10px 12px;
+  padding: 10px 12px 10px 16px; /* 16px left = 4px bar + 12px gap */
   display: flex; align-items: center; gap: 10px;
   min-width: 0;
-  border-left: 4px solid transparent;
+  min-height: 62px; /* fixed height — timer appearing won't shift layout */
 }
-.stage-card[data-diff="Normal"]    .card-main { border-left-color: #e4e4e4; }
-.stage-card[data-diff="Nightmare"] .card-main { border-left-color: #fc9c0c; }
-.stage-card[data-diff="Hell"]      .card-main { border-left-color: #fc2424; }
-.stage-card[data-diff="Torment"]   .card-main { border-left-color: #b40cfc; }
 
 /* Stage info */
 .stage-info { flex: 1; min-width: 0; }
@@ -382,17 +387,20 @@ body::before {
   text-shadow: 0 0 8px rgba(220,38,38,.9);
 }
 
-/* Progress bar */
+/* Progress bar — vertical left strip, fills bottom-to-top */
 .progress {
-  height: 3px; background: rgba(255,255,255,.04);
-  overflow: hidden;
+  position: absolute;
+  left: 0; bottom: 0; width: 4px; height: 100%;
+  z-index: 2; overflow: hidden;
+  background: transparent;
 }
 .progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--red-dark), var(--gold));
-  transition: width .5s linear;
+  position: absolute;
+  left: 0; right: 0; bottom: 0; height: 0%;
+  background: linear-gradient(0deg, var(--red-dark), var(--gold));
+  transition: height .5s linear;
 }
-.progress-fill.urgent { background: linear-gradient(90deg, var(--red-dark), var(--red-lt)); }
+.progress-fill.urgent { background: linear-gradient(0deg, var(--red-dark), var(--red-lt)); }
 
 /* Remove button — hidden by default, shown only in edit mode */
 .remove-btn {
