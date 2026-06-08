@@ -387,20 +387,18 @@ body::before {
   text-shadow: 0 0 8px rgba(220,38,38,.9);
 }
 
-/* Progress bar — vertical left strip, fills bottom-to-top */
+/* Progress bar — horizontal strip at bottom, starts after left accent bar */
 .progress {
-  position: absolute;
-  left: 0; bottom: 0; width: 4px; height: 100%;
-  z-index: 2; overflow: hidden;
-  background: transparent;
+  height: 3px; background: rgba(255,255,255,.04);
+  overflow: hidden;
+  margin-left: 4px; /* don't overlap the vertical diff color strip */
 }
 .progress-fill {
-  position: absolute;
-  left: 0; right: 0; bottom: 0; height: 0%;
-  background: linear-gradient(0deg, var(--red-dark), var(--gold));
-  transition: height .5s linear;
+  height: 100%;
+  background: linear-gradient(90deg, var(--red-dark), var(--gold));
+  transition: width .5s linear;
 }
-.progress-fill.urgent { background: linear-gradient(0deg, var(--red-dark), var(--red-lt)); }
+.progress-fill.urgent { background: linear-gradient(90deg, var(--red-dark), var(--red-lt)); }
 
 /* Remove button — hidden by default, shown only in edit mode */
 .remove-btn {

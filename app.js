@@ -278,7 +278,7 @@ function tickTimer(key) {
   } else {
     timerEl.textContent = fmtTime(remaining);
     timerEl.className = 'timer ' + (remaining < 60000 ? 'urgent' : 'counting');
-    fillEl.style.height = pct + '%';
+    fillEl.style.width = pct + '%';
     fillEl.className = 'progress-fill' + (remaining < 60000 ? ' urgent' : '');
     card.classList.add('timer-active');
     card.classList.remove('timer-ready');
@@ -400,7 +400,7 @@ function render(skipAnim = false) {
           </button>
         </div>
       </div>
-      <div class="progress"><div class="progress-fill" style="height:0%"></div></div>
+      <div class="progress"><div class="progress-fill" style="width:0%"></div></div>
     `;
 
     card.querySelector('.grey-chest').addEventListener('click', () => {
