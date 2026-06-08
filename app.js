@@ -478,40 +478,53 @@ function clearRoute() {
   save(); render(); toast(t('toastCleared'));
 }
 
-/* ── Custom cursor ── */
-let _cursorUrl = null;
+/* ── Custom cursors (soulstones per difficulty) ── */
+const _cursors = {};
+
+function makeCursorUrl(img) {
+  const size = 32;
+  const canvas = document.createElement('canvas');
+  canvas.width = size; canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = false;
+  ctx.save();
+  ctx.translate(size / 2, size / 2);
+  ctx.scale(-1, 1);             // flip 180° on vertical axis (mirror) → real cursor look
+  ctx.rotate(Math.PI * 3 / 4); // 135° CW → tip lands at upper-left (~4,4)
+  ctx.drawImage(img, -size / 2, -size / 2, size, size);
+  ctx.restore();
+  return canvas.toDataURL('image/png');
+}
 
 function applyCursorMode(isEditMode) {
   let s = document.getElementById('cursor-style');
   if (!s) { s = document.createElement('style'); s.id = 'cursor-style'; document.head.appendChild(s); }
-  if (!_cursorUrl) return;
-  if (isEditMode) {
-    // Edit mode: let browser use natural cursors (grab on cards, pointer on buttons)
-    s.textContent = '';
-  } else {
-    // Normal mode: crystal cursor on everything — no pointer/grab distractions
-    s.textContent = `* { cursor: url("${_cursorUrl}") 4 4, auto !important; }`;
-  }
+  if (isEditMode || !_cursors.Normal) { s.textContent = ''; return; }
+  // Normal mode: soulstone cursors, matched to difficulty — no pointer/grab/hand distractions
+  s.textContent = `
+    * { cursor: url("${_cursors.Normal}") 4 4, auto !important; }
+    .stage-card[data-diff="Nightmare"], .stage-card[data-diff="Nightmare"] * { cursor: url("${_cursors.Nightmare}") 4 4, auto !important; }
+    .stage-card[data-diff="Hell"],      .stage-card[data-diff="Hell"]      * { cursor: url("${_cursors.Hell}")      4 4, auto !important; }
+    .stage-card[data-diff="Torment"],   .stage-card[data-diff="Torment"]   * { cursor: url("${_cursors.Torment}")   4 4, auto !important; }
+  `;
 }
 
 function initCursor() {
-  const img = new Image();
-  img.onload = () => {
-    const size = 32;
-    const canvas = document.createElement('canvas');
-    canvas.width = size; canvas.height = size;
-    const ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = false;
-    ctx.save();
-    ctx.translate(size / 2, size / 2);
-    // Crystal tip is at the bottom of the sprite → rotate 135° CW to place tip at upper-left
-    ctx.rotate(Math.PI * 3 / 4);
-    ctx.drawImage(img, -size / 2, -size / 2, size, size);
-    ctx.restore();
-    _cursorUrl = canvas.toDataURL('image/png');
-    applyCursorMode(false); // start in normal (crystal) mode
-  };
-  img.src = 'img/Item_190004.png';
+  const items = [
+    { diff: 'Normal',    src: 'img/Item_190001.png' },
+    { diff: 'Nightmare', src: 'img/Item_190002.png' },
+    { diff: 'Hell',      src: 'img/Item_190003.png' },
+    { diff: 'Torment',   src: 'img/Item_190004.png' },
+  ];
+  let loaded = 0;
+  items.forEach(({ diff, src }) => {
+    const img = new Image();
+    img.onload = () => {
+      _cursors[diff] = makeCursorUrl(img);
+      if (++loaded === items.length) applyCursorMode(false);
+    };
+    img.src = src;
+  });
 }
 
 /* ── Init ── */
