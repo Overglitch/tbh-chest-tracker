@@ -137,6 +137,7 @@ const I18N = {
 
 let lang = localStorage.getItem('tbh-lang') || 'en';
 let soundOn = localStorage.getItem('tbh-sound') !== 'false';
+let editMode = false;
 let route = [];
 let timers = {};
 let notified = {};
@@ -203,6 +204,15 @@ function populateStages() {
   });
 }
 
+/* ── Edit mode ── */
+function toggleEditMode() {
+  editMode = !editMode;
+  document.getElementById('route').classList.toggle('edit-mode', editMode);
+  document.getElementById('editBtn').classList.toggle('edit-active', editMode);
+  const addSection = document.getElementById('addSection');
+  addSection.classList.toggle('edit-mode', editMode);
+}
+
 /* ── Stats ── */
 function updateStats() {
   let ready = 0, cd = 0, grey = 0;
@@ -218,6 +228,10 @@ function updateStats() {
   setText('greyCount', `${grey}/${route.length}`);
   document.getElementById('footerActions').style.display = route.length ? '' : 'none';
   document.getElementById('emptyState').style.display = route.length ? 'none' : '';
+  // Show add bar when route is empty (so user can always add stages)
+  const addSection = document.getElementById('addSection');
+  if (route.length === 0) { addSection.classList.add('force-show'); }
+  else { addSection.classList.remove('force-show'); }
 }
 function setText(id, val) {
   const el = document.getElementById(id);
@@ -249,18 +263,18 @@ function tickTimer(key) {
   const blueBtn = card.querySelector('.blue-chest');
 
   if (remaining <= 0) {
-    timerEl.textContent = t('readyMsg');
-    timerEl.className = 'timer done';
-    fillEl.style.width = '100%';
-    fillEl.className = 'progress-fill done';
-    card.classList.remove('timer-active');
-    card.classList.add('timer-ready');
-    if (blueBtn) { blueBtn.className = 'chest-btn blue-chest blue-ready'; }
+    // Timer done: reset blue chest to grey + mark as done, stop timer
     if (!notified[key]) {
       notified[key] = true;
       playAlert();
       toast(`${t('toastReady')} — ${r.stageId}`);
     }
+    r.blueDone = true;
+    r.blueDropAt = null;
+    stopTimer(key);
+    save();
+    render();
+    return;
   } else {
     timerEl.textContent = fmtTime(remaining);
     timerEl.className = 'timer ' + (remaining < 60000 ? 'urgent' : 'counting');
@@ -283,19 +297,23 @@ function render() {
   const empty = document.getElementById('emptyState');
 
   route.forEach((r, i) => {
+    // If timer was already expired when loading (e.g. after page refresh), auto-resolve
+    if (r.blueDropAt != null && Date.now() - r.blueDropAt >= CD_MS) {
+      r.blueDone = true;
+      r.blueDropAt = null;
+    }
+
     const card = document.createElement('div');
     card.className = 'stage-card';
     card.dataset.key = r.key;
     card.dataset.diff = r.diff;
     card.style.animationDelay = `${i * 30}ms`;
 
-    const hasTimer = r.blueDropAt != null;
-    const isReady = hasTimer && Date.now() - r.blueDropAt >= CD_MS;
-    if (hasTimer && !isReady) card.classList.add('timer-active');
-    if (isReady) card.classList.add('timer-ready');
+    const hasTimer = r.blueDropAt != null; // only true while countdown active
+    if (hasTimer) card.classList.add('timer-active');
 
     const greyState = r.grey ? 'collected' : '';
-    const blueState = hasTimer ? (isReady ? 'blue-ready' : 'blue-active') : '';
+    const blueState = r.blueDone ? 'blue-done' : (hasTimer ? 'blue-active' : '');
 
     card.innerHTML = `
       <div class="card-main">
@@ -318,7 +336,7 @@ function render() {
         </div>
         <div class="blue-action">
           ${hasTimer
-            ? `<div class="timer ${isReady ? 'done' : 'counting'}">${isReady ? t('readyMsg') : fmtTime(CD_MS - (Date.now() - r.blueDropAt))}</div>
+            ? `<div class="timer counting">${fmtTime(CD_MS - (Date.now() - r.blueDropAt))}</div>
                <button class="cancel-timer">${t('cancel')}</button>`
             : ''}
           <button class="remove-btn" title="Remove">
@@ -336,15 +354,22 @@ function render() {
     });
 
     const blueBtn = card.querySelector('.blue-chest');
-    if (!hasTimer) {
-      blueBtn.addEventListener('click', () => {
-        r.blueDropAt = Date.now(); notified[r.key] = false;
-        save(); render();
-      });
-    }
+    blueBtn.addEventListener('click', () => {
+      if (r.blueDropAt != null) return; // ignore clicks while countdown running
+      if (r.blueDone) {
+        // Already collected — clicking resets it (ready for next cycle)
+        r.blueDone = false;
+      } else {
+        // Start timer
+        r.blueDropAt = Date.now();
+        notified[r.key] = false;
+      }
+      save(); render();
+    });
     if (hasTimer) {
       card.querySelector('.cancel-timer').addEventListener('click', () => {
-        r.blueDropAt = null; stopTimer(r.key); notified[r.key] = false;
+        r.blueDropAt = null; r.blueDone = false;
+        stopTimer(r.key); notified[r.key] = false;
         save(); render();
       });
     }
@@ -356,8 +381,7 @@ function render() {
     });
 
     container.insertBefore(card, empty);
-    if (hasTimer && !isReady) startTimer(r.key);
-    if (isReady) tickTimer(r.key);
+    if (hasTimer) startTimer(r.key);
   });
 
   updateStats();
@@ -411,6 +435,8 @@ function init() {
   document.getElementById('resetBtn').addEventListener('click', resetTimers);
   document.getElementById('clearBtn').addEventListener('click', clearRoute);
   document.getElementById('defaultBtn').addEventListener('click', loadDefaultRoute);
+
+  document.getElementById('editBtn').addEventListener('click', toggleEditMode);
 
   document.getElementById('langSwitch').addEventListener('click', e => {
     if (!e.target.dataset.lang) return;
