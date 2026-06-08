@@ -170,10 +170,10 @@ body::before {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--r);
-  display: flex; align-items: stretch;
   position: relative;
   transition: border-color .2s, box-shadow .2s, transform .15s;
   animation: cardIn .3s ease-out both;
+  overflow: hidden;
 }
 .stage-card:hover {
   border-color: rgba(0,229,255,.12);
@@ -194,20 +194,19 @@ body::before {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Difficulty accent bar */
-.diff-accent {
-  width: 4px; border-radius: var(--r) 0 0 var(--r); flex-shrink: 0;
-}
-.diff-accent.Normal    { background: #e4e4e4; }
-.diff-accent.Nightmare { background: #fc9c0c; }
-.diff-accent.Hell      { background: #fc2424; }
-.diff-accent.Torment   { background: #b40cfc; }
+/* Difficulty accent bar — rendered as left border on card-main */
+.diff-accent { display: none; }
 
 .card-main {
-  flex: 1; padding: 10px 12px;
+  padding: 10px 12px;
   display: flex; align-items: center; gap: 10px;
   min-width: 0;
+  border-left: 4px solid transparent;
 }
+.stage-card[data-diff="Normal"]    .card-main { border-left-color: #e4e4e4; }
+.stage-card[data-diff="Nightmare"] .card-main { border-left-color: #fc9c0c; }
+.stage-card[data-diff="Hell"]      .card-main { border-left-color: #fc2424; }
+.stage-card[data-diff="Torment"]   .card-main { border-left-color: #b40cfc; }
 
 /* Stage info */
 .stage-info { flex: 1; min-width: 0; }
@@ -281,7 +280,10 @@ body::before {
 }
 
 /* Blue chest action */
-.blue-action { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0; margin-left: auto; }
+.blue-action {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+  flex-shrink: 0; margin-left: auto; padding-right: 14px;
+}
 
 /* Timer display */
 .timer {
@@ -304,11 +306,10 @@ body::before {
 /* Progress bar */
 .progress {
   height: 3px; background: rgba(255,255,255,.04);
-  border-radius: 2px; overflow: hidden;
-  position: absolute; bottom: 0; left: 0; right: 0;
+  overflow: hidden;
 }
 .progress-fill {
-  height: 100%; border-radius: 2px;
+  height: 100%;
   background: linear-gradient(90deg, var(--red-dark), var(--gold));
   transition: width .5s linear;
 }
@@ -317,16 +318,17 @@ body::before {
 
 /* Remove button */
 .remove-btn {
-  position: absolute; top: 6px; right: 6px;
+  position: absolute; top: 50%; right: 4px;
+  transform: translateY(-50%);
   background: transparent; border: none;
   color: var(--text3); cursor: pointer;
-  width: 18px; height: 18px;
+  width: 20px; height: 20px;
   display: flex; align-items: center; justify-content: center;
   border-radius: 2px; transition: all .15s;
-  opacity: 0;
+  opacity: 0; z-index: 2;
 }
 .stage-card:hover .remove-btn { opacity: 1; }
-.remove-btn:hover { color: var(--red-lt); background: rgba(220,38,38,.1); }
+.remove-btn:hover { color: var(--red-lt); background: rgba(220,38,38,.15); }
 
 /* Cancel timer */
 .cancel-timer {
