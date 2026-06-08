@@ -10,83 +10,102 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Header -->
-  <header class="site-header">
+
+  <header class="header">
     <div class="header-inner">
       <div class="logo">
-        <img src="https://taskbarhero.wiki/favicon.ico" alt="TBH" class="logo-icon" onerror="this.style.display='none'" />
-        <span class="logo-title">TBH</span>
-        <span class="logo-subtitle">Chest Tracker</span>
+        <img class="logo-icon" src="img/Item_930011.png" alt="TBH" width="26" height="26" />
+        <span class="logo-text">TBH</span>
+        <span class="logo-sep">·</span>
+        <span class="logo-sub">Chest Tracker</span>
       </div>
-      <div class="header-controls">
-        <div class="lang-switcher" id="langSwitcher">
-          <button class="lang-btn active" data-lang="en">EN</button>
-          <button class="lang-btn" data-lang="es">ES</button>
-          <button class="lang-btn" data-lang="pt">PT</button>
+      <div class="header-actions">
+        <div class="lang-switch" id="langSwitch">
+          <button class="lang-opt active" data-lang="en">EN</button>
+          <button class="lang-opt" data-lang="es">ES</button>
+          <button class="lang-opt" data-lang="pt">PT</button>
         </div>
-        <button class="icon-btn" id="resetBtn" title="Reset all">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        </button>
-        <button class="icon-btn" id="soundBtn" title="Toggle sound">
-          <svg id="soundIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        <button class="hdr-btn" id="soundToggle" title="Toggle sound">
+          <svg id="soundIcon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Stats bar -->
-  <div class="stats-bar">
-    <div class="stat-pill">
-      <span class="stat-icon">⬜</span>
-      <span id="greyCount">0</span>/<span id="greyTotal">10</span>
-      <span class="stat-label" data-i18n="grey">Grey</span>
+  <!-- Summary pills -->
+  <section class="summary" id="summary">
+    <div class="pill pill-blue">
+      <span class="pill-val" id="readyCount">0</span>
+      <span class="pill-label" data-i18n="ready">Ready</span>
     </div>
-    <div class="stat-pill">
-      <span class="stat-icon">🔵</span>
-      <span id="blueReady">0</span>
-      <span class="stat-label" data-i18n="ready">Ready</span>
+    <div class="pill pill-gold">
+      <span class="pill-val" id="cdCount">0</span>
+      <span class="pill-label" data-i18n="onCd">On CD</span>
     </div>
-    <div class="stat-pill">
-      <span class="stat-icon">⏱</span>
-      <span id="blueOnCd">0</span>
-      <span class="stat-label" data-i18n="onCd">On CD</span>
+    <div class="pill pill-grey">
+      <span class="pill-val" id="greyCount">0</span>
+      <span class="pill-label" data-i18n="grey">Collected</span>
     </div>
-    <div class="stat-pill route-stat">
-      <span class="stat-icon">🗺</span>
-      <span id="routeCount">0</span>
-      <span class="stat-label" data-i18n="inRoute">In route</span>
-    </div>
-  </div>
+  </section>
 
-  <!-- Filters -->
-  <div class="filter-bar">
-    <div class="diff-tabs" id="diffTabs">
-      <button class="diff-tab active" data-diff="all" data-i18n="all">All</button>
-      <button class="diff-tab" data-diff="Normal">Normal</button>
-      <button class="diff-tab" data-diff="Nightmare" data-i18n="nightmare">Nightmare</button>
-      <button class="diff-tab" data-diff="Inferno">Inferno</button>
-      <button class="diff-tab" data-diff="Torment">Torment</button>
+  <!-- Add stage selector -->
+  <section class="add-section">
+    <div class="add-bar" id="addBar">
+      <div class="select-wrap">
+        <select id="actSelect" class="sel">
+          <option value="1">Act 1</option>
+          <option value="2">Act 2</option>
+          <option value="3">Act 3</option>
+        </select>
+      </div>
+      <div class="select-wrap">
+        <select id="stageSelect" class="sel"></select>
+      </div>
+      <div class="select-wrap">
+        <select id="diffSelect" class="sel">
+          <option value="Normal">Normal</option>
+          <option value="Nightmare">Nightmare</option>
+          <option value="Hell">Hell</option>
+          <option value="Torment">Torment</option>
+        </select>
+      </div>
+      <button class="btn-add" id="addBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span data-i18n="add">Add</span>
+      </button>
     </div>
-    <div class="view-controls">
-      <label class="toggle-label">
-        <input type="checkbox" id="showRouteOnly" />
-        <span data-i18n="routeOnly">Route only</span>
-      </label>
-    </div>
-  </div>
+  </section>
 
-  <!-- Main content -->
-  <main class="main-content">
-    <div class="phases-grid" id="phasesGrid"></div>
+  <!-- Route cards -->
+  <main class="route" id="route">
+    <div class="empty-state" id="emptyState">
+      <img src="img/Item_910011.png" alt="" width="40" height="40" style="image-rendering:pixelated;filter:grayscale(1) brightness(.4);opacity:.5" />
+      <p data-i18n="emptyTitle">No stages in your route</p>
+      <p class="empty-hint" data-i18n="emptyHint">Select an act, stage and difficulty above to start tracking</p>
+    </div>
   </main>
 
-  <!-- Footer -->
+  <!-- Actions -->
+  <div class="footer-actions" id="footerActions" style="display:none">
+    <button class="btn-secondary" id="resetBtn">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      <span data-i18n="resetAll">Reset timers</span>
+    </button>
+    <button class="btn-secondary" id="defaultBtn">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      <span data-i18n="loadDefault">Load default route</span>
+    </button>
+    <button class="btn-secondary btn-danger" id="clearBtn">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+      <span data-i18n="clearRoute">Clear route</span>
+    </button>
+  </div>
+
   <footer class="site-footer">
-    <span data-i18n="footer">TBH Chest Tracker · Data saved locally in your browser</span>
+    <span>TBH Chest Tracker</span>
   </footer>
 
-  <!-- Sound alert (Web Audio API) -->
-  <audio id="alertSound" preload="auto"></audio>
+  <div class="toast-container" id="toasts"></div>
 
   <script src="app.js"></script>
 </body>
