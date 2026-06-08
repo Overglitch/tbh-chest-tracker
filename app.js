@@ -75,6 +75,8 @@ const I18N = {
     toastReady: 'Blue chest ready', toastAdded: 'Added',
     toastRemoved: 'Removed', toastExists: 'Already in route',
     toastReset: 'All reset', toastDefault: 'Default route loaded',
+    toastTitleReady: 'Chest Ready', toastTitleAdd: 'Stage Added',
+    toastTitleRemove: 'Stage Removed', toastTitleInfo: 'Info',
     toastCleared: 'Route cleared',
     greyHint: 'Grey chest collected (don\'t open)',
     blueHint: 'Click when blue chest drops',
@@ -98,6 +100,8 @@ const I18N = {
     toastReady: 'Baúl azul listo', toastAdded: 'Agregado',
     toastRemoved: 'Eliminado', toastExists: 'Ya está en la ruta',
     toastReset: 'Todo reiniciado', toastDefault: 'Ruta por defecto cargada',
+    toastTitleReady: 'Cofre Listo', toastTitleAdd: 'Etapa Agregada',
+    toastTitleRemove: 'Etapa Eliminada', toastTitleInfo: 'Info',
     toastCleared: 'Ruta limpiada',
     greyHint: 'Cofre gris recogido (no abrir)',
     blueHint: 'Click cuando dropee el cofre azul',
@@ -121,6 +125,8 @@ const I18N = {
     toastReady: 'Baú azul pronto', toastAdded: 'Adicionado',
     toastRemoved: 'Removido', toastExists: 'Já na rota',
     toastReset: 'Tudo resetado', toastDefault: 'Rota padrão carregada',
+    toastTitleReady: 'Baú Pronto', toastTitleAdd: 'Etapa Adicionada',
+    toastTitleRemove: 'Etapa Removida', toastTitleInfo: 'Info',
     toastCleared: 'Rota limpa',
     greyHint: 'Baú cinza coletado (não abrir)',
     blueHint: 'Clique quando o baú azul dropar',
@@ -174,12 +180,38 @@ function playAlert() {
 }
 
 /* ── Toast ── */
-function toast(msg) {
+const TOAST_ICONS = {
+  ready:  'img/Item_920011.png',
+  add:    'img/Item_920011.png',
+  remove: 'img/Item_910011.png',
+  info:   'img/Item_930011.png',
+};
+const TOAST_TITLES = {
+  ready:  () => t('toastTitleReady'),
+  add:    () => t('toastTitleAdd'),
+  remove: () => t('toastTitleRemove'),
+  info:   () => t('toastTitleInfo'),
+};
+function toast(msg, type = 'info') {
+  const icon = TOAST_ICONS[type] || TOAST_ICONS.info;
+  const title = (TOAST_TITLES[type] || TOAST_TITLES.info)();
   const el = document.createElement('div');
-  el.className = 'toast';
-  el.textContent = msg;
-  document.getElementById('toasts').appendChild(el);
-  setTimeout(() => el.remove(), 4000);
+  el.className = `toast toast-${type}`;
+  el.innerHTML = `
+    <img class="toast-img" src="${icon}" alt="" />
+    <div class="toast-body">
+      <span class="toast-title">${title}</span>
+      <span class="toast-sub">${msg}</span>
+    </div>
+    <div class="toast-drain"><div class="toast-drain-fill"></div></div>
+  `;
+  const container = document.getElementById('toasts');
+  container.appendChild(el);
+  const DURATION = 4000;
+  setTimeout(() => {
+    el.classList.add('toast-out');
+    setTimeout(() => el.remove(), 320);
+  }, DURATION - 320);
 }
 
 /* ── i18n ── */
@@ -264,7 +296,7 @@ function tickTimer(key) {
     if (!notified[key]) {
       notified[key] = true;
       playAlert();
-      toast(`${t('toastReady')} — ${r.stageId}`);
+      toast(r.stageId, 'ready');
     }
     r.blueDone = true;
     r.blueDropAt = null;
@@ -426,7 +458,7 @@ function render(skipAnim = false) {
     card.querySelector('.remove-btn').addEventListener('click', () => {
       stopTimer(r.key);
       route = route.filter(x => x.key !== r.key);
-      save(); render(); toast(t('toastRemoved')); // animate after removal
+      save(); render(); toast(r.stageName, 'remove');
     });
 
     initDrag(card, r.key);
@@ -443,10 +475,10 @@ function addToRoute() {
   const stageId = document.getElementById('stageSelect').value;
   const diff = document.getElementById('diffSelect').value;
   const key = `${stageId}-${diff}`;
-  if (route.some(r => r.key === key)) { toast(t('toastExists')); return; }
+  if (route.some(r => r.key === key)) { toast(t('toastExists'), 'info'); return; }
   const stage = findStage(stageId);
   route.push({ key, stageId, stageName: stage.name, diff, grey: false, blueDropAt: null });
-  save(); render(); toast(t('toastAdded'));
+  save(); render(); toast(findStage(stageId).name, 'add');
 }
 
 function loadDefaultRoute() {
@@ -456,7 +488,7 @@ function loadDefaultRoute() {
     const stage = findStage(d.stageId);
     return { key: `${d.stageId}-${d.diff}`, stageId: d.stageId, stageName: stage.name, diff: d.diff, grey: false, blueDropAt: null };
   });
-  save(); render(); toast(t('toastDefault'));
+  save(); render(); toast(t('toastDefault'), 'info');
 }
 
 function resetTimers() {
@@ -464,14 +496,14 @@ function resetTimers() {
   Object.keys(timers).forEach(k => clearInterval(timers[k]));
   timers = {}; notified = {};
   route.forEach(r => { r.grey = false; r.blueDropAt = null; });
-  save(); render(); toast(t('toastReset'));
+  save(); render(); toast(t('toastReset'), 'info');
 }
 
 function clearRoute() {
   if (!confirm(t('clearConfirm'))) return;
   Object.keys(timers).forEach(k => clearInterval(timers[k]));
   timers = {}; notified = {}; route = [];
-  save(); render(); toast(t('toastCleared'));
+  save(); render(); toast(t('toastCleared'), 'info');
 }
 
 /* ── Custom cursors (soulstones per difficulty) ── */
