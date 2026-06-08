@@ -51,15 +51,15 @@ function getLv(stageId, diff) { return (DIFF_LV[diff] || {})[stageId] || '?'; }
 // Default optimized route: 1 stage per act level for chest farming
 const DEFAULT_ROUTE = [
   { stageId: '1-1',  diff: 'Normal' },
-  { stageId: '1-3',  diff: 'Normal' },
-  { stageId: '1-5',  diff: 'Normal' },
-  { stageId: '1-7',  diff: 'Normal' },
-  { stageId: '1-9',  diff: 'Normal' },
-  { stageId: '2-1',  diff: 'Normal' },
-  { stageId: '2-4',  diff: 'Normal' },
-  { stageId: '2-7',  diff: 'Normal' },
-  { stageId: '2-10', diff: 'Normal' },
-  { stageId: '3-5',  diff: 'Normal' },
+  { stageId: '1-4',  diff: 'Normal' },
+  { stageId: '1-8',  diff: 'Normal' },
+  { stageId: '2-3',  diff: 'Normal' },
+  { stageId: '2-8',  diff: 'Normal' },
+  { stageId: '3-8',  diff: 'Normal' },
+  { stageId: '1-9',  diff: 'Nightmare' },
+  { stageId: '3-5',  diff: 'Nightmare' },
+  { stageId: '2-5',  diff: 'Hell' },
+  { stageId: '1-3',  diff: 'Torment' },
 ];
 
 /* ── i18n ── */
