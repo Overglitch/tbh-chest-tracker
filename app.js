@@ -215,15 +215,12 @@ function toggleEditMode() {
 
 /* ── Stats ── */
 function updateStats() {
-  let ready = 0, cd = 0, grey = 0;
+  let cd = 0, grey = 0;
   const now = Date.now();
   route.forEach(r => {
     if (r.grey) grey++;
-    if (r.blueDropAt != null) {
-      if (now - r.blueDropAt >= CD_MS) ready++; else cd++;
-    }
+    if (r.blueDropAt != null && now - r.blueDropAt < CD_MS) cd++;
   });
-  setText('readyCount', ready);
   setText('cdCount', cd);
   setText('greyCount', `${grey}/${route.length}`);
   document.getElementById('footerActions').style.display = route.length ? '' : 'none';
@@ -412,12 +409,10 @@ function render(skipAnim = false) {
     const blueBtn = card.querySelector('.blue-chest');
     blueBtn.addEventListener('click', () => {
       if (r.blueDropAt != null) return; // ignore clicks while countdown running
-      if (r.blueDone) {
-        r.blueDone = false;
-      } else {
-        r.blueDropAt = Date.now();
-        notified[r.key] = false;
-      }
+      // whether grey or green (done), clicking starts the timer immediately
+      r.blueDone = false;
+      r.blueDropAt = Date.now();
+      notified[r.key] = false;
       save(); render(true);
     });
     if (hasTimer) {

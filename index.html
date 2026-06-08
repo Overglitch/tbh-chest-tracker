@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=13" />
+  <link rel="stylesheet" href="style.css?v=14" />
 </head>
 <body>
 
@@ -35,19 +35,21 @@
     </div>
   </header>
 
-  <!-- Summary pills -->
+  <!-- Summary HUD -->
   <section class="summary" id="summary">
-    <div class="pill pill-blue">
-      <span class="pill-val" id="readyCount">0</span>
-      <span class="pill-label" data-i18n="ready">Ready</span>
-    </div>
     <div class="pill pill-gold">
-      <span class="pill-val" id="cdCount">0</span>
-      <span class="pill-label" data-i18n="onCd">On CD</span>
+      <img class="pill-icon" src="img/Item_920011.png" alt="" />
+      <div class="pill-info">
+        <span class="pill-val" id="cdCount">0</span>
+        <span class="pill-label" data-i18n="onCd">On CD</span>
+      </div>
     </div>
     <div class="pill pill-grey">
-      <span class="pill-val" id="greyCount">0</span>
-      <span class="pill-label" data-i18n="grey">Collected</span>
+      <img class="pill-icon" src="img/Item_910011.png" alt="" />
+      <div class="pill-info">
+        <span class="pill-val" id="greyCount">0</span>
+        <span class="pill-label" data-i18n="grey">Collected</span>
+      </div>
     </div>
   </section>
 
@@ -121,6 +123,6 @@
 
   <div class="toast-container" id="toasts"></div>
 
-  <script src="app.js?v=13"></script>
+  <script src="app.js?v=14"></script>
 </body>
 </html>
